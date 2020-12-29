@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:codelab_timetracker/PageIntervals.dart';
+import 'package:codelab_timetracker/page_new_activity.dart';
 import 'package:codelab_timetracker/tree.dart' hide getTree;
 // the old getTree()
 import 'package:codelab_timetracker/requests.dart';
@@ -65,6 +66,11 @@ class _PageActivitiesState extends State<PageActivities> {
               separatorBuilder: (BuildContext context, int index) =>
               const Divider(),
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => _createActivity(snapshot.data.root.id),
+              tooltip: 'Create Activity',
+              child: const Icon(Icons.add),
+            ),
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -85,6 +91,7 @@ class _PageActivitiesState extends State<PageActivities> {
     // split by '.' and taking first element of resulting list removes the microseconds part
     if (activity is Project) {
       return ListTile(
+        leading: Icon(Icons.folder_open),
         title: Text('${activity.name}'),
         trailing: Text('$strDuration'),
         onTap: () => _navigateDownActivities(activity.id),
@@ -96,6 +103,7 @@ class _PageActivitiesState extends State<PageActivities> {
       trailing = Text('$strDuration');
 
       return ListTile(
+        leading: Icon(Icons.description_outlined),
         title: Text('${activity.name}'),
         trailing: trailing,
         onTap: () => _navigateDownIntervals(activity.id),
@@ -112,6 +120,14 @@ class _PageActivitiesState extends State<PageActivities> {
         },
       );
     }
+  }
+
+  void _createActivity(int projectId) {
+    _timer.cancel();
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(
+      builder: (context) => PageNewActivity(projectId),
+    ));
   }
 
   void _navigateDownActivities(int childId) {
