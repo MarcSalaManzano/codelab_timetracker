@@ -17,6 +17,7 @@ class PageActivities extends StatefulWidget {
 
 class _PageActivitiesState extends State<PageActivities> {
   int id;
+  IconData iconData = Icons.play_arrow;
   Future<Tree> futureTree;
   Timer _timer;
   static const int periodeRefresh = 6;
@@ -117,25 +118,26 @@ class _PageActivitiesState extends State<PageActivities> {
       Task task = activity as Task;
       // at the moment is the same, maybe changes in the future
       Widget trailing;
-      trailing = Text('$strDuration');
+      if(task.active)
+        trailing = new IconButton(icon: Icon(Icons.pause), onPressed: () {
+          stop(activity.id);
+          _refresh();
+          (activity as Task).active = false;
+      }
+        );
+      else
+        trailing = new IconButton(icon: Icon(Icons.play_arrow), onPressed: () {
+          start(activity.id);
+          _refresh();
+          (activity as Task).active = true;
+        });
 
       return ListTile(
         leading: Icon(Icons.description_outlined),
         title: Text('${activity.name}'),
-        trailing: trailing,
-        onTap: () => _navigateDownIntervals(activity.id),
-        onLongPress: () {
-          if ((activity as Task).active) {
-            stop(activity.id);
-            _refresh();
-            (activity as Task).active = false;
-          } else {
-            start(activity.id);
-            _refresh();
-            (activity as Task).active = true;
-          }
-        },
-      );
+        onTap: () {_navigateDownIntervals(activity.id);},
+        trailing: trailing
+        );
     }
   }
 
@@ -158,6 +160,8 @@ class _PageActivitiesState extends State<PageActivities> {
       _refresh();
     });
   }
+
+
 
   void _navigateDownIntervals(int childId) {
     _timer.cancel();
@@ -183,5 +187,4 @@ class _PageActivitiesState extends State<PageActivities> {
     _timer.cancel();
     super.dispose();
   }
-
 }
