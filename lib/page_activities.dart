@@ -50,7 +50,7 @@ class _PageActivitiesState extends State<PageActivities> {
                 IconButton(icon: Icon(Icons.home),
                     onPressed: () {
                       while(Navigator.of(context).canPop()) {
-                        print("pop");
+                        //print("pop");
                         Navigator.of(context).pop();
                       }
                       PageActivities(0);}),

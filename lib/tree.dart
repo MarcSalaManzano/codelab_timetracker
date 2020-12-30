@@ -102,9 +102,9 @@ Tree getTree() {
 
 testLoadTree() {
   Tree tree = getTree();
-  print("root name ${tree.root.name}, duration ${tree.root.duration}");
+  //print("root name ${tree.root.name}, duration ${tree.root.duration}");
   for (Activity act in tree.root.children) {
-    print("child name ${act.name}, duration ${act.duration}");
+    //print("child name ${act.name}, duration ${act.duration}");
   }
 }
 

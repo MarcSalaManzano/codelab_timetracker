@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TimeTracker',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.lime,
         textTheme: TextTheme(
             subhead: TextStyle(fontSize:20.0),
             body1:TextStyle(fontSize:20.0)),

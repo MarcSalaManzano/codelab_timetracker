@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:codelab_timetracker/requests.dart';
+import 'package:codelab_timetracker/page_activities.dart';
+import 'dart:async';
 
 enum TypeActivity {Task, Project}
 
@@ -110,7 +113,15 @@ class _PageNewActivityState extends State<PageNewActivity> {
                         // Validate will return true if the form is valid, or false if
                         // the form is invalid.
                         if (_formKey.currentState.validate()) {
-                          //TODO: Llamar a funcion de requests para crear actividad
+                          if(typeActivity == TypeActivity.Task) {
+                            createTask(id, nameController.text, tagsController.text);
+                          } else {
+                            createProject(id, nameController.text, tagsController.text);
+                          }
+                          Navigator.of(context)
+                              .push(MaterialPageRoute<void>(
+                            builder: (context) => PageActivities(id),
+                          ));
                         }
                       },
                       child: Text('Submit'),
