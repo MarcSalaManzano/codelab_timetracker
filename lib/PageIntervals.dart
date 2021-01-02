@@ -43,7 +43,11 @@ class _PageIntervalsState extends State<PageIntervals> {
       builder: (context, snapshot) {
         // anonymous function
         if (snapshot.hasData) {
+          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'No començada';
+          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'No començada';
+          String strDuration = Duration(seconds: snapshot.data.root.duration).toString().split('.').first;
           int numChildren = snapshot.data.root.children.length;
+          bool isActive = (snapshot.data.root as Tree.Task).active;
           return Scaffold(
             appBar: AppBar(
               title: Text(snapshot.data.root.name),
@@ -57,14 +61,29 @@ class _PageIntervalsState extends State<PageIntervals> {
                     PageActivities(0);})
               ],
             ),
-            body: ListView.separated(
-              // it's like ListView.builder() but better because it includes a separator between items
-              padding: const EdgeInsets.all(16.0),
-              itemCount: numChildren,
-              itemBuilder: (BuildContext context, int index) =>
-                  _buildRow(snapshot.data.root.children[index], index),
-              separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+            body: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[Text('Informació:', style: TextStyle(fontWeight: FontWeight.bold),),
+                  Text('Start Date: ${startDate}'),
+                  Text('End Date: ${endDate}'),
+                  Text('Duration: ${strDuration}'),
+                  Divider( thickness: 2.0,),
+                  Text('Intervals:', style: TextStyle(fontWeight: FontWeight.bold),),
+                  Expanded(
+                    child: ListView.separated(
+                      // it's like ListView.builder() but better because it includes a separator between items
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: numChildren,
+                      itemBuilder: (BuildContext context, int index) =>
+                          _buildRow(snapshot.data.root.children[index], index, (isActive && index == numChildren-1)),
+                      separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                    ),
+                  ),
+              ]),
             ),
           );
         } else if (snapshot.hasError) {
@@ -81,14 +100,16 @@ class _PageIntervalsState extends State<PageIntervals> {
     );
   }
 
-  Widget _buildRow(Tree.Interval interval, int index) {
+  Widget _buildRow(Tree.Interval interval, int index, bool isActive) {
     String strDuration = Duration(seconds: interval.duration).toString().split('.').first;
     String strInitialDate = interval.initialDate.toString().split('.')[0];
     // this removes the microseconds part
     String strFinalDate = interval.finalDate.toString().split('.')[0];
+    Color textColor = isActive ? Colors.green : Colors.black;
     return ListTile(
-      title: Text('from ${strInitialDate} to ${strFinalDate}'),
-      trailing: Text('$strDuration'),
+      title: Text('From: ${strInitialDate} \nTo: ${strFinalDate} ', style: TextStyle(color: textColor),),
+      subtitle: Text('Duration: $strDuration'),
+
     );
   }
 

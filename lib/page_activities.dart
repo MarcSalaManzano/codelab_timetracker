@@ -118,7 +118,7 @@ class _PageActivitiesState extends State<PageActivities> {
       return ListTile(
         leading: Icon(Icons.folder_open),
         title: Text('${activity.name}'),
-        trailing: Text('$strDuration'),
+        subtitle: Text('$strDuration'),
         onTap: () => _navigateDownActivities(activity.id),
       );
     } else if (activity is Task) {
@@ -128,20 +128,21 @@ class _PageActivitiesState extends State<PageActivities> {
       if(task.active)
         trailing = new IconButton(icon: Icon(Icons.pause), onPressed: () {
           stop(activity.id);
-          _refresh();
           (activity as Task).active = false;
+          _refresh();
       }
         );
       else
         trailing = new IconButton(icon: Icon(Icons.play_arrow), onPressed: () {
           start(activity.id);
-          _refresh();
           (activity as Task).active = true;
+          _refresh();
         });
 
       return ListTile(
         leading: Icon(Icons.description_outlined),
         title: Text('${activity.name}'),
+        subtitle: Text('${strDuration}'),
         onTap: () {_navigateDownIntervals(activity.id);},
         trailing: trailing
         );
