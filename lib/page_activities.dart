@@ -46,8 +46,9 @@ class _PageActivitiesState extends State<PageActivities> {
         // anonymous function
 
         if (snapshot.hasData) {
-          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : '';
-          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : '';
+          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'No començada';
+          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'No començada';
+          String strDuration = Duration(seconds: snapshot.data.root.duration).toString().split('.').first;
           return Scaffold(
             appBar: AppBar(
               title: Text(snapshot.data.root.name),
@@ -63,27 +64,33 @@ class _PageActivitiesState extends State<PageActivities> {
               ],
             ),
             body:
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('Informació:', style: TextStyle(fontWeight: FontWeight.bold),),
-                    Text('Start Date: ${startDate}'),
-                    Text('End Date: ${endDate}'),
-                    Text('Activitats filles:', style: TextStyle(fontWeight: FontWeight.bold),),
-                    Expanded(
-                      child: ListView.separated(
-                        // it's like ListView.builder() but better because it includes a separator between items
-                        padding: const EdgeInsets.all(16.0),
-                        itemCount: snapshot.data.root.children.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            _buildRow(snapshot.data.root.children[index], index),
-                        separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
-                      ),
-                    )
-                  ],
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('Informació:', style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text('Start Date: ${startDate}'),
+                      Text('End Date: ${endDate}'),
+                      Text('Duration: ${strDuration}'),
+                      Divider( thickness: 2.0,),
+                      Text('Activitats filles:', style: TextStyle(fontWeight: FontWeight.bold),),
+                      Expanded(
+                        child: ListView.separated(
+                          // it's like ListView.builder() but better because it includes a separator between items
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: snapshot.data.root.children.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              _buildRow(snapshot.data.root.children[index], index),
+                          separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
+
             floatingActionButton: FloatingActionButton(
               onPressed: () => _createActivity(snapshot.data.root.id),
               tooltip: 'Create Activity',
