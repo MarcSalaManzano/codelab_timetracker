@@ -118,10 +118,7 @@ class _PageNewActivityState extends State<PageNewActivity> {
                           } else {
                             createProject(id, nameController.text, tagsController.text);
                           } //TODO: Arreglar el tirar enrere i tornar a la pagina
-                          Navigator.of(context)
-                              .push(MaterialPageRoute<void>(
-                            builder: (context) => PageActivities(id),
-                          ));
+                          Navigator.of(context).pop();
                         }
                       },
                       child: Text('Submit'),

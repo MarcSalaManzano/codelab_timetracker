@@ -154,7 +154,10 @@ class _PageActivitiesState extends State<PageActivities> {
     Navigator.of(context)
         .push(MaterialPageRoute<void>(
       builder: (context) => PageNewActivity(projectId),
-    ));
+    )).then( (var value) {
+      _activateTimer();
+      _refresh();
+    });
   }
 
   void _navigateDownActivities(int childId) {
