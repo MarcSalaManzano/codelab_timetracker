@@ -1,3 +1,4 @@
+import 'package:codelab_timetracker/page_find_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:codelab_timetracker/PageIntervals.dart';
 import 'package:codelab_timetracker/page_new_activity.dart';
@@ -14,7 +15,7 @@ class PageActivities extends StatefulWidget {
 
   PageActivities(this.id);
 }
-
+enum MenuOption { findTag, calculateTime }
 class _PageActivitiesState extends State<PageActivities> {
   int id;
   IconData iconData = Icons.play_arrow;
@@ -53,6 +54,19 @@ class _PageActivitiesState extends State<PageActivities> {
             appBar: AppBar(
               title: Text(snapshot.data.root.name),
               actions: <Widget>[
+                PopupMenuButton<MenuOption>(
+                  onSelected: (MenuOption result) => _menuOption(result),
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuOption>>[
+                    const PopupMenuItem<MenuOption>(
+                      value: MenuOption.calculateTime,
+                      child: Text('Calculate total time'),
+                    ),
+                    const PopupMenuItem<MenuOption>(
+                      value: MenuOption.findTag,
+                      child: Text('Find by tag'),
+                    ),
+                  ],
+                ),
                 IconButton(icon: Icon(Icons.home),
                     onPressed: () {
                       while(Navigator.of(context).canPop()) {
@@ -158,6 +172,22 @@ class _PageActivitiesState extends State<PageActivities> {
       _activateTimer();
       _refresh();
     });
+  }
+
+  void _menuOption(MenuOption result) {
+    if(result == MenuOption.findTag) {
+      _timer.cancel();
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => FindByTag(),
+      )).then( (var value) {
+        _activateTimer();
+        _refresh();
+      });
+    } else {
+
+    }
   }
 
   void _navigateDownActivities(int childId) {
