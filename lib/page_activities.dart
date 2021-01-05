@@ -1,3 +1,4 @@
+import 'package:codelab_timetracker/page_calculate_time.dart';
 import 'package:codelab_timetracker/page_find_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:codelab_timetracker/PageIntervals.dart';
@@ -186,6 +187,15 @@ class _PageActivitiesState extends State<PageActivities> {
         _refresh();
       });
     } else {
+      _timer.cancel();
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => CalculateTotalTime(),
+      )).then( (var value) {
+        _activateTimer();
+        _refresh();
+      });
 
     }
   }
