@@ -1,4 +1,6 @@
 import 'package:codelab_timetracker/page_activities.dart';
+import 'package:codelab_timetracker/page_find_tag.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CalculateTotalTime extends StatefulWidget {
@@ -8,14 +10,30 @@ class CalculateTotalTime extends StatefulWidget {
 
 class _CalculateTotalTimeState extends State<CalculateTotalTime> {
   final _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedHour = TimeOfDay.now();
+  DateTime initialDate = DateTime.now();
+  Duration initialTimer = new Duration();
+  DateTime finalDate = DateTime.now();
+  Duration finalTimer = new Duration();
+  String dropdownValue = "EUR";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
+          PopupMenuButton<MenuOption>(
+            onSelected: (MenuOption result) => _menuOption(result),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuOption>>[
+              const PopupMenuItem<MenuOption>(
+                value: MenuOption.calculateTime,
+                child: Text('Calculate total time'),
+              ),
+              const PopupMenuItem<MenuOption>(
+                value: MenuOption.findTag,
+                child: Text('Find by tag'),
+              ),
+            ],
+          ),
           IconButton(icon: Icon(Icons.home),
               onPressed: () {
                 while(Navigator.of(context).canPop()) {
@@ -24,7 +42,7 @@ class _CalculateTotalTimeState extends State<CalculateTotalTime> {
                 }
                 PageActivities(0);}),
         ],
-        title: const Text('Cerca per tag'),
+        title: const Text('Calculate Total'),
 
       ),
       body:
@@ -37,30 +55,147 @@ class _CalculateTotalTimeState extends State<CalculateTotalTime> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Data inicial:"),
-                  RaisedButton(
-                    onPressed: () => _selectDate(context), // Refer step 3
-                    child: Text(
-                      "${selectedDate.toLocal()}".split(' ')[0],
-                      style:
-                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text("Initial Date:"),
+                  ),
+                  Expanded(
+                    child: RaisedButton(
+                      onPressed: () => _selectDate(context), // Refer step 3
+                      child: Text(
+                        "${initialDate.toLocal()}".split(' ')[0],
+                        style:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  Text("Hora inicial:"),
-                  RaisedButton(
-                    onPressed: () => _selectTime(context), // Refer step 3
-                    child: Text(
-                      "${selectedHour}",
-                      style:
-                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  Expanded(child: Text("Initial Time:")),
+                  Expanded(
+                    child: RaisedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext builder) {
+                          return Container(
+                              height: MediaQuery.of(context).copyWith().size.height / 3,
+                              child: CupertinoTimerPicker(
+                                mode: CupertinoTimerPickerMode.hms,
+                                minuteInterval: 1,
+                                secondInterval: 1,
+                                initialTimerDuration: initialTimer,
+                                onTimerDurationChanged: (Duration changedtimer) {
+                                  setState(() {
+                                    initialTimer = changedtimer;
+                                  });
+                                },
+                              ));
+                          });
+                        },
+                      child: Text(
+                        "${initialTimer.toString().split('.').first.padLeft(8, "0")}",
+                        style:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
               ),
+
+
+              Row(
+                children: <Widget>[
+                  Expanded(child: Text("Final Date:")),
+                  Expanded(
+                    child: RaisedButton(
+                      onPressed: () => _selectFinalDate(context), // Refer step 3
+                      child: Text(
+                        "${finalDate.toLocal()}".split(' ')[0],
+                        style:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text("Final Time:"),
+                  ),
+                  Expanded(
+                    child: RaisedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext builder) {
+                              return Container(
+                                  height: MediaQuery.of(context).copyWith().size.height / 3,
+                                  child: CupertinoTimerPicker(
+                                    mode: CupertinoTimerPickerMode.hms,
+                                    minuteInterval: 1,
+                                    secondInterval: 1,
+                                    initialTimerDuration: finalTimer,
+                                    onTimerDurationChanged: (Duration changedtimer) {
+                                      setState(() {
+                                        finalTimer = changedtimer;
+                                      });
+                                    },
+                                  ));
+                            });
+                      },
+                      child: Text(
+                        "${finalTimer.toString().split('.').first.padLeft(8, "0")}",
+                        style:
+                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(),
+              TextField(
+                decoration: new InputDecoration(labelText: "Price per hour"),
+                keyboardType: TextInputType.number,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(child: Text("Choose a currency")),
+                  Expanded(child:
+                    DropdownButton<String>(
+                      value: dropdownValue,
+                      icon: Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      underline: Container(
+                        height: 2,
+                        color: Colors.lime,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          dropdownValue = newValue;
+                        });
+                      },
+                      items: <String>['EUR', 'USD', 'GBP']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ]
+              ),
+              Center(
+                child: RaisedButton(
+                  child: Text("Calculate"),
+                ),
+              ),
+              Divider(),
+              Text("Total Price: "),
             ],
           ),
         ),
@@ -71,24 +206,46 @@ class _CalculateTotalTimeState extends State<CalculateTotalTime> {
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate, // Refer step 1
+      initialDate: initialDate, // Refer step 1
       firstDate: DateTime(2000),
       lastDate: DateTime(2025),
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != initialDate)
       setState(() {
-        selectedDate = picked;
+        initialDate = picked;
       });
   }
 
-  _selectTime(BuildContext context) async {
-    final TimeOfDay picked = await showTimePicker(
+  _selectFinalDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
       context: context,
-      initialTime: selectedHour
+      initialDate: finalDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
     );
-    if (picked != null && picked != selectedHour)
+    if (picked != null && picked != finalDate)
       setState(() {
-        selectedHour = picked;
+        finalDate = picked;
       });
   }
+
+  void _menuOption(MenuOption result) {
+    if(result == MenuOption.findTag) {
+
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => FindByTag(),
+      ));
+    } else {
+
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => CalculateTotalTime(),
+      ));
+
+    }
+  }
+
 }

@@ -30,7 +30,7 @@ class Search extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     return Container(
         child: Center(
-          child: Text("Busca activitats a partir de un tag"),
+          child: Text("Search activity by tag"),
         )
     );
   }

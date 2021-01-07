@@ -1,3 +1,5 @@
+import 'package:codelab_timetracker/page_calculate_time.dart';
+import 'package:codelab_timetracker/page_find_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:codelab_timetracker/tree.dart' as Tree hide getTree;
 // to avoid collision with an Interval class in another library
@@ -43,8 +45,8 @@ class _PageIntervalsState extends State<PageIntervals> {
       builder: (context, snapshot) {
         // anonymous function
         if (snapshot.hasData) {
-          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'No començada';
-          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'No començada';
+          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'Not started';
+          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'Not started';
           String strDuration = Duration(seconds: snapshot.data.root.duration).toString().split('.').first;
           int numChildren = snapshot.data.root.children.length;
           bool isActive = (snapshot.data.root as Tree.Task).active;
@@ -52,6 +54,19 @@ class _PageIntervalsState extends State<PageIntervals> {
             appBar: AppBar(
               title: Text(snapshot.data.root.name),
               actions: <Widget>[
+                PopupMenuButton<MenuOption>(
+                  onSelected: (MenuOption result) => _menuOption(result),
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuOption>>[
+                    const PopupMenuItem<MenuOption>(
+                      value: MenuOption.calculateTime,
+                      child: Text('Calculate total time'),
+                    ),
+                    const PopupMenuItem<MenuOption>(
+                      value: MenuOption.findTag,
+                      child: Text('Find by tag'),
+                    ),
+                  ],
+                ),
                 IconButton(icon: Icon(Icons.home),
                   onPressed: () {
                     while(Navigator.of(context).canPop()) {
@@ -66,7 +81,7 @@ class _PageIntervalsState extends State<PageIntervals> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[Text('Informació:', style: TextStyle(fontWeight: FontWeight.bold),),
+                  children: <Widget>[Text('Information:', style: TextStyle(fontWeight: FontWeight.bold),),
                   Text('Start Date: ${startDate}'),
                   Text('End Date: ${endDate}'),
                   Text('Duration: ${strDuration}'),
@@ -111,6 +126,27 @@ class _PageIntervalsState extends State<PageIntervals> {
       subtitle: Text('Duration: $strDuration'),
 
     );
+  }
+
+  void _menuOption(MenuOption result) {
+    if(result == MenuOption.findTag) {
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => FindByTag(),
+      )).then( (var value) {
+        _activateTimer();
+      });
+    } else {
+      // we can not do just _refresh() because then the up arrow doesnt appear in the appbar
+      Navigator.of(context)
+          .push(MaterialPageRoute<void>(
+        builder: (context) => CalculateTotalTime(),
+      )).then( (var value) {
+        _activateTimer();
+      });
+
+    }
   }
 
   @override

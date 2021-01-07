@@ -48,8 +48,8 @@ class _PageActivitiesState extends State<PageActivities> {
         // anonymous function
 
         if (snapshot.hasData) {
-          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'No començada';
-          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'No començada';
+          String startDate = snapshot.data.root.initialDate!=null ? snapshot.data.root.initialDate.toString().split('.')[0] : 'Not started';
+          String endDate = snapshot.data.root.finalDate!=null ? snapshot.data.root.finalDate.toString().split('.')[0] : 'Not started';
           String strDuration = Duration(seconds: snapshot.data.root.duration).toString().split('.').first;
           return Scaffold(
             appBar: AppBar(
@@ -85,12 +85,12 @@ class _PageActivitiesState extends State<PageActivities> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text('Informació:', style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text('Information:', style: TextStyle(fontWeight: FontWeight.bold),),
                       Text('Start Date: ${startDate}'),
                       Text('End Date: ${endDate}'),
                       Text('Duration: ${strDuration}'),
                       Divider( thickness: 2.0,),
-                      Text('Activitats filles:', style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text('Activities:', style: TextStyle(fontWeight: FontWeight.bold),),
                       Expanded(
                         child: ListView.separated(
                           // it's like ListView.builder() but better because it includes a separator between items
@@ -143,14 +143,18 @@ class _PageActivitiesState extends State<PageActivities> {
       if(task.active)
         trailing = new IconButton(icon: Icon(Icons.pause), onPressed: () {
           stop(activity.id);
-          (activity as Task).active = false;
+          setState(() {
+            task.active == false;
+          });
           _refresh();
       }
         );
       else
         trailing = new IconButton(icon: Icon(Icons.play_arrow), onPressed: () {
           start(activity.id);
-          (activity as Task).active = true;
+          setState(() {
+            task.active == true;
+          });
           _refresh();
         });
 
