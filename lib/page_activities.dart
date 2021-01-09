@@ -6,6 +6,7 @@ import 'package:codelab_timetracker/page_new_activity.dart';
 import 'package:codelab_timetracker/tree.dart' hide getTree;
 // the old getTree()
 import 'package:codelab_timetracker/requests.dart';
+import 'package:codelab_timetracker/settings.dart';
 import 'dart:async';
 // has the new getTree() that sends an http request to the server
 class PageActivities extends StatefulWidget {
@@ -75,6 +76,13 @@ class _PageActivitiesState extends State<PageActivities> {
                         Navigator.of(context).pop();
                       }
                       PageActivities(0);}),
+                IconButton(icon: Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute<void>(
+                      builder: (context) => Settings(),
+                    ));
+                  },
+                )
                 //TODO other actions
               ],
             ),
